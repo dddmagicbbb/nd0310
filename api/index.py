@@ -7,24 +7,19 @@ from dotenv import load_dotenv
 # .env 파일 로드
 load_dotenv()
 
-# Vercel 환경인지 확인
-IS_VERCEL = "VERCEL" in os.environ
-
-# Vercel에서는 정적 파일 서비스를 Vercel CDN에 맡기고, 로컬에서는 Flask가 담당함
-if not IS_VERCEL:
-    app = Flask(__name__, static_folder='../', static_url_path='/')
-else:
-    app = Flask(__name__)
-
+# Flask 앱 초기화
+app = Flask(__name__)
 CORS(app)
 
-# Groq 클라이언트 초기화
-client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
+# Groq 클라이언트 초기화 (런타임에 Key 확인)
+def get_groq_client():
+    api_key = os.environ.get("GROQ_API_KEY")
+    if not api_key:
+        return None
+    return Groq(api_key=api_key)
 
-@app.route('/', methods=['GET'])
-def home():
-    if not IS_VERCEL:
-        return app.send_static_file('index.html')
+@app.route('/api/health', methods=['GET'])
+def health():
     return jsonify({"status": "healthy", "message": "Edu-Calc AI API is running"})
 
 @app.route('/api/test', methods=['GET'])
@@ -72,6 +67,10 @@ def chat():
         return jsonify({"error": "메시지를 입력해 주세요."}), 400
 
     level_prompt = SYSTEM_PROMPTS.get(level, SYSTEM_PROMPTS["high-school"])
+    client = get_groq_client()
+
+    if not client:
+        return jsonify({"error": "GROQ_API_KEY가 설정되지 않았습니다. Vercel 환경 변수를 확인해 주세요."}), 500
 
     try:
         chat_completion = client.chat.completions.create(
@@ -106,5 +105,8 @@ def chat():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
+    # 로컬에서 실행할 때는 정적 파일 설정을 추가합니다.
+    app.static_folder = '../'
+    app.static_url_path = '/'
     # host='0.0.0.0' 설정을 통해 외부(동일 네트워크)에서 접속이 가능하도록 합니다.
     app.run(debug=True, host='0.0.0.0', port=5001)
