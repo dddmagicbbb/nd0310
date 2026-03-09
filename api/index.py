@@ -7,8 +7,15 @@ from dotenv import load_dotenv
 # .env 파일 로드
 load_dotenv()
 
-# static_folder를 루트와 public으로 설정하여 파일 서비스
-app = Flask(__name__, static_folder='../', static_url_path='/')
+# Vercel 환경인지 확인
+IS_VERCEL = "VERCEL" in os.environ
+
+# Vercel에서는 정적 파일 서비스를 Vercel CDN에 맡기고, 로컬에서는 Flask가 담당함
+if not IS_VERCEL:
+    app = Flask(__name__, static_folder='../', static_url_path='/')
+else:
+    app = Flask(__name__)
+
 CORS(app)
 
 # Groq 클라이언트 초기화
@@ -16,8 +23,9 @@ client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 
 @app.route('/', methods=['GET'])
 def home():
-    # 루트 접속 시 index.html 파일을 반환합니다.
-    return app.send_static_file('index.html')
+    if not IS_VERCEL:
+        return app.send_static_file('index.html')
+    return jsonify({"status": "healthy", "message": "Edu-Calc AI API is running"})
 
 @app.route('/api/test', methods=['GET'])
 def test_connection():
