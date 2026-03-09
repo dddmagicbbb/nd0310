@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edu-Calc AI | 단계별 학습형 공학계산기</title>
+    <!-- Google Fonts: Inter & Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Outfit:wght@300;400;600;700&display=swap"
+        rel="stylesheet">
+    <!-- KaTeX for Math Rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="public/css/style.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Background Elements -->
+        <div class="bg-glow-1"></div>
+        <div class="bg-glow-2"></div>
+
+        <header>
+            <h1 class="logo">Edu-Calc<span> AI</span></h1>
+            <p class="subtitle">단순한 결과를 넘어 원리를 깨우치는 AI 계산기</p>
+        </header>
+
+        <main>
+            <!-- Level Selector -->
+            <section class="level-selector-container">
+                <div class="level-selector">
+                    <input type="radio" id="elem" name="level" value="elementary">
+                    <label for="elem">초등</label>
+
+                    <input type="radio" id="middle" name="level" value="middle-school">
+                    <label for="middle">중등</label>
+
+                    <input type="radio" id="high" name="level" value="high-school" checked>
+                    <label for="high">고등</label>
+
+                    <input type="radio" id="univ" name="level" value="university">
+                    <label for="univ">대학</label>
+
+                    <div class="selector-glider"></div>
+                </div>
+            </section>
+
+            <!-- Input Section -->
+            <section class="input-section">
+                <div class="glass-input-container">
+                    <textarea id="userInput" placeholder="계산하고 싶은 수식이나 질문을 입력하세요... (예: 2x + 5 = 15 를 풀어줘)"
+                        rows="1"></textarea>
+                    <div class="input-actions">
+                        <button id="resetBtn" class="action-btn reset-btn" title="초기화">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M4 4V9H4.582M19.938 11C19.751 7.06 16.51 4 12.5 4C9.52 4 6.96 5.68 5.72 8.12M20 20V15H19.418M4.062 13C4.249 16.94 7.49 20 11.5 20C14.48 20 17.04 18.32 18.28 15.88"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+                        </button>
+                        <button id="sendBtn" class="action-btn send-btn" title="보내기">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Loading Indicator -->
+            <div id="loading" class="loading-container hidden">
+                <div class="pulse-loader"></div>
+                <p>AI가 원리를 분석 중입니다...</p>
+            </div>
+
+            <!-- Result Section -->
+            <section id="resultContainer" class="result-section hidden">
+                <!-- Result Card -->
+                <div class="result-card fade-in">
+                    <div class="card-header">
+                        <span class="badge success">결과 (Result)</span>
+                    </div>
+                    <div id="calcResult" class="card-body math-content"></div>
+                </div>
+
+                <!-- Concept Card -->
+                <div class="result-card fade-in delay-1">
+                    <div class="card-header">
+                        <span class="badge accent">핵심 개념 (Core Concept)</span>
+                    </div>
+                    <div id="coreConcept" class="card-body"></div>
+                </div>
+
+                <!-- Explanation Accordion -->
+                <div class="result-card fade-in delay-2">
+                    <details class="accordion">
+                        <summary class="card-header">
+                            <span class="badge secondary">상세 풀이 (Detailed Explanation)</span>
+                            <div class="icon-toggle"></div>
+                        </summary>
+                        <div id="detailExplanation" class="card-body math-content"></div>
+                    </details>
+                </div>
+
+                <!-- Practice Card -->
+                <div class="result-card fade-in delay-3">
+                    <div class="card-header">
+                        <span class="badge">유사 문제 (Practice Problem)</span>
+                    </div>
+                    <div id="practiceProblem" class="card-body math-content"></div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 Edu-Calc AI. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <!-- Custom JS -->
+    <script src="public/js/script.js"></script>
+</body>
+
+</html>
